@@ -53,9 +53,8 @@ class PhotoViewer(wx.Frame):
     # ==================================================================== #
     # GUI
     # ==================================================================== #
-
     def resource_path(self, image):
-        """ Get absolute path to resource, works for dev and PyInstaller
+        """Get absolute path to resource, works for dev and for PyInstaller
         """
         path = os.path.dirname(os.path.abspath(__file__))
         base_path = getattr(sys, '_MEIPASS', path)
@@ -72,7 +71,7 @@ class PhotoViewer(wx.Frame):
 
         # ==================================================================== #
         # Photo Label Details
-        # ==================================================================== #
+        # ==================================================================== #        
         def add_labeled_text_field(vbox, panel, label_text, field_name):
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             label = wx.StaticText(panel, label=label_text)
@@ -89,7 +88,7 @@ class PhotoViewer(wx.Frame):
 
         # ==================================================================== #
         # Save, Sample, Archive
-        # ==================================================================== #
+        # ==================================================================== #        
         button_size = (100, 25)
 
         save_button = wx.Button(panel, label="Save Photo", size=button_size)
@@ -124,7 +123,7 @@ class PhotoViewer(wx.Frame):
 
         # ==================================================================== #
         # Next and Last Buttons
-        # ==================================================================== #
+        # ==================================================================== #        
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         last_button = wx.Button(panel, label="Last Photo")
         next_button = wx.Button(panel, label="Next Photo")
@@ -185,15 +184,9 @@ class PhotoViewer(wx.Frame):
 
     # ==================================================================== #
     # Keyboard Shortcuts
-    # ==================================================================== #
+    # ==================================================================== #    
     def onClose(self, event):
         self.Destroy()
-
-    '''
-    def onFocus(self, event):
-        self.SetFocus()
-        event.Skip()
-    '''
 
     def setShortcuts(self):
         rotate_right_id = wx.NewIdRef()
@@ -214,20 +207,6 @@ class PhotoViewer(wx.Frame):
         self.Bind(wx.EVT_MENU, self.SavePhoto, id=save_photo_id)
         self.Bind(wx.EVT_MENU, self.LastPhoto, id=last_photo_id)
         self.Bind(wx.EVT_MENU, self.NextPhoto, id=next_photo_id)
-
-    '''
-    def onKeyPress(self, event):
-        keycode = event.GetKeyCode()
-        ctrl_down = event.ControlDown()
-
-        if ctrl_down and keycode == ord('R'):
-            self.RotateRight()
-
-        if ctrl_down and keycode == ord('S'):
-            self.SavePhoto()
-
-        event.Skip()
-    '''
 
     # ==================================================================== #
     # Update & Get
@@ -263,6 +242,7 @@ class PhotoViewer(wx.Frame):
     # Save, Sample and Archive Photos
     # ==================================================================== #
     def Validation(self, hole_id, run_no, depth_from, depth_to):
+        
         # ==================================================================== #
         # Cells not None
         # ==================================================================== #
