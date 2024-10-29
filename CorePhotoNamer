@@ -140,7 +140,7 @@ class PhotoViewer(wx.Frame):
 
     def Credit(self, ):
         dialog = wx.MessageDialog(self,
-                            "Created and mainted by Christopher Lien",
+                            "Created and maintained by Christopher Lien",
                             "Credit",
                             wx.OK | wx.ICON_INFORMATION)
 
