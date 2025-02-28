@@ -17,6 +17,15 @@ def BuildPhotoList(target_dir):
     photo_list = sorted([f for f in os.listdir(target_dir) if f.lower().endswith('.jpg')])
     return photo_list
 
+def NoValidData(parent=None):
+    dialog = wx.MessageDialog(parent,
+                              "No JPG files found in target folder. Exiting.",
+                              "Error",
+                              wx.OK | wx.ICON_INFORMATION)
+
+    dialog.ShowModal()
+    dialog.Destroy()
+
 class PhotoViewer(wx.Frame):
     def __init__(self, parent, title, photo_list):
         super(PhotoViewer, self).__init__(parent, title=title, size=(1200, 800))
@@ -27,16 +36,23 @@ class PhotoViewer(wx.Frame):
         self.current_photo_index = 0
 
         icon = "icon.jpg"
-        icon_dir = self.resource_path(icon)
+        icon_dir = self.ResourcePath(icon)
         icon = wx.Icon(icon_dir, wx.BITMAP_TYPE_JPEG)
         self.SetIcon(icon)
 
         panel = wx.Panel(self)
+        panel.SetBackgroundColour(wx.Colour(25, 25, 25))  # Matching panel background
+        panel.SetForegroundColour(wx.Colour(255, 255, 255))  # Matching panel text
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.selection_panel = wx.Panel(panel, size=(200, -1))
+        self.selection_panel.SetBackgroundColour(wx.Colour(25, 25, 25))  # Matching selection panel background
+        self.selection_panel.SetForegroundColour(wx.Colour(255, 255, 255))  # Matching selection panel text
         self.CreateSelectionPanel(self.selection_panel)
         self.image_panel = wx.Panel(panel)
+        self.image_panel.SetBackgroundColour(wx.Colour(25, 25, 25))  # Matching image panel background
+        self.image_panel.SetForegroundColour(wx.Colour(255, 255, 255))  # Matching image panel text
+
 
         sizer.Add(self.selection_panel, 0, wx.EXPAND | wx.ALL, 5)
         sizer.Add(self.image_panel, 1, wx.EXPAND | wx.ALL, 5)
@@ -45,16 +61,16 @@ class PhotoViewer(wx.Frame):
         self.Centre()
         self.Show()
 
-        self.Bind(wx.EVT_CLOSE, self.onClose)
-        self.setShortcuts()
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+        self.SetShortcuts()
 
         self.ImageWindow(self.current_photo_index)
 
     # ==================================================================== #
     # GUI
     # ==================================================================== #
-    def resource_path(self, image):
-        """Get absolute path to resource, works for dev and for PyInstaller
+    def ResourcePath(self, image):
+        """ Get absolute path to resource, works for dev and for PyInstaller
         """
         path = os.path.dirname(os.path.abspath(__file__))
         base_path = getattr(sys, '_MEIPASS', path)
@@ -71,29 +87,41 @@ class PhotoViewer(wx.Frame):
 
         # ==================================================================== #
         # Photo Label Details
-        # ==================================================================== #        
-        def add_labeled_text_field(vbox, panel, label_text, field_name):
+        # ==================================================================== #
+        def AddLabeledTextField(vbox, panel, label_text, field_name):
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             label = wx.StaticText(panel, label=label_text)
             text_ctrl = wx.TextCtrl(panel)
+
+            text_ctrl.SetBackgroundColour(wx.Colour(56, 56, 56))
+            text_ctrl.SetForegroundColour(wx.Colour(255, 255, 255))
+
             hbox.Add(label, 0, wx.ALIGN_CENTER | wx.ALL, 5)
             hbox.Add(text_ctrl, 1, wx.EXPAND | wx.ALL, 5)
             vbox.Add(hbox, 0, wx.EXPAND | wx.ALL, 5)
             setattr(self, field_name, text_ctrl)
 
-        add_labeled_text_field(vbox, panel, "Hole ID:", "hole_id_text")
-        add_labeled_text_field(vbox, panel, "Run No:", "run_no_text")
-        add_labeled_text_field(vbox, panel, "Depth From:", "depth_from_text")
-        add_labeled_text_field(vbox, panel, "Depth To:", "depth_to_text")
+        AddLabeledTextField(vbox, panel, "Hole ID:", "hole_id_text")
+        AddLabeledTextField(vbox, panel, "Run No:", "run_no_text")
+        AddLabeledTextField(vbox, panel, "Depth From:", "depth_from_text")
+        AddLabeledTextField(vbox, panel, "Depth To:", "depth_to_text")
 
         # ==================================================================== #
         # Save, Sample, Archive
-        # ==================================================================== #        
+        # ==================================================================== #
         button_size = (100, 25)
 
         save_button = wx.Button(panel, label="Save Photo", size=button_size)
         sample_button = wx.Button(panel, label="Sample Photo", size=button_size)
         archive_button = wx.Button(panel, label="Archive Photo", size=button_size)
+
+        save_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+        sample_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+        archive_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+
+        save_button.SetForegroundColour(wx.Colour(255, 255, 255))
+        sample_button.SetForegroundColour(wx.Colour(255, 255, 255))
+        archive_button.SetForegroundColour(wx.Colour(255, 255, 255))
 
         vbox.Add(save_button, 0, wx.CENTER | wx.ALL, 5)
         vbox.Add(sample_button, 0, wx.CENTER | wx.ALL, 5)
@@ -113,6 +141,12 @@ class PhotoViewer(wx.Frame):
         rotate_left_button = wx.Button(panel, label="Rotate Left")
         rotate_right_button = wx.Button(panel, label="Rotate Right")
 
+        rotate_left_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+        rotate_right_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+
+        rotate_left_button.SetForegroundColour(wx.Colour(255, 255, 255))
+        rotate_right_button.SetForegroundColour(wx.Colour(255, 255, 255))
+
         rotate_hbox.Add(rotate_left_button, 1, wx.EXPAND | wx.ALL, 5)
         rotate_hbox.Add(rotate_right_button, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -123,10 +157,16 @@ class PhotoViewer(wx.Frame):
 
         # ==================================================================== #
         # Next and Last Buttons
-        # ==================================================================== #        
+        # ==================================================================== #
         hbox = wx.BoxSizer(wx.HORIZONTAL)
         last_button = wx.Button(panel, label="Last Photo")
         next_button = wx.Button(panel, label="Next Photo")
+
+        last_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+        next_button.SetBackgroundColour(wx.Colour(25, 25, 25))
+
+        last_button.SetForegroundColour(wx.Colour(255, 255, 255))
+        next_button.SetForegroundColour(wx.Colour(255, 255, 255))
 
         hbox.Add(last_button, 1, wx.EXPAND | wx.ALL, 5)
         hbox.Add(next_button, 1, wx.EXPAND | wx.ALL, 5)
@@ -184,11 +224,11 @@ class PhotoViewer(wx.Frame):
 
     # ==================================================================== #
     # Keyboard Shortcuts
-    # ==================================================================== #    
-    def onClose(self, event):
+    # ==================================================================== #
+    def OnClose(self, event):
         self.Destroy()
 
-    def setShortcuts(self):
+    def SetShortcuts(self):
         rotate_right_id = wx.NewIdRef()
         save_photo_id = wx.NewIdRef()
         last_photo_id = wx.NewIdRef()
@@ -242,7 +282,7 @@ class PhotoViewer(wx.Frame):
     # Save, Sample and Archive Photos
     # ==================================================================== #
     def Validation(self, hole_id, run_no, depth_from, depth_to):
-        
+
         # ==================================================================== #
         # Cells not None
         # ==================================================================== #
@@ -435,11 +475,11 @@ class PhotoViewer(wx.Frame):
 
 if __name__ == '__main__':
     target_dir = SelectTargetFolder()
-    # print(f"Folder selected: {target_dir}")
     photo_list = BuildPhotoList(target_dir)
     if photo_list:
         app = wx.App(False)
         frame = PhotoViewer(None, "Photo Viewer", photo_list)
         app.MainLoop()
     else:
-        print("No .jpg files found in the selected directory.")
+        app = wx.App(False)
+        NoValidData()
